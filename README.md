@@ -1,5 +1,7 @@
 # gonbayes
 
+<img src="https://img.shields.io/badge/go-v1.12-blue.svg"/> [![GoDoc](https://godoc.org/github.com/po3rin/gonbayes?status.svg)](https://godoc.org/github.com/po3rin/gonbayes)
+
 <img src ="./images/negaposi.png" width="460px">
 
 Simple Naive Bayes Classifier in Go.
@@ -32,8 +34,8 @@ func loadNegaPosiDataset(file string) (map[string]string, error) {
 }
 
 func main() {
-	class := []string{posiLabel, negaLabel}
-	threshold := 1.4
+    class := []string{posiLabel, negaLabel}
+    threshold := 1.4
 
     dataset, err := loadNegaPosiDataset(*f)
 
@@ -42,8 +44,8 @@ func main() {
         classifier.Train(v, s)
     }
 
-	result := classifier.Classify(*s)
-	fmt.Println(result) // great success!! -> positive
+    result := classifier.Classify(*s)
+    fmt.Println(result) // great success!! -> positive
 
     // encode trained classifier to gob file.
     classifier.Encode("negaposi_classifier.gob")
