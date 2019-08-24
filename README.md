@@ -1,6 +1,15 @@
 # gonbayes
 
+<img src ="./images/negaposi.png" width="460px">
+
 Simple Naive Bayes Classifier in Go.
+
+## What is Naive Bayes
+
+Naive Bayes is a simple technique for constructing classifiers: models that assign class labels to problem instances, represented as vectors of feature values, where the class labels are drawn from some finite set.
+
+Bayes' theorem
+<img src ="./images/nb.png" width="400px">
 
 ## Example
 
