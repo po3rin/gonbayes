@@ -10,31 +10,27 @@ import (
 	"github.com/pkg/errors"
 )
 
-// Classifier is documents types categoclasifier.
+// Classifier is documents categories clasifier.
 type Classifier struct {
-	Words             map[string]map[string]uint64
-	TotalWords        uint64
-	TotalDocsInTypes  map[string]uint64
-	TotalDocs         uint64
-	TotalWordsInTypes map[string]uint64
-	Threshold         float64
+	Words                  map[string]map[string]uint64
+	TotalWords             uint64
+	TotalDocsInCategories  map[string]uint64
+	TotalDocs              uint64
+	TotalWordsInCategories map[string]uint64
+	Threshold              float64
 }
 
 // NewClassifier inits classifier.
-func NewClassifier(types []string, Threshold float64) (c Classifier) {
+func NewClassifier(categories []string, Threshold float64) (c Classifier) {
 	c = Classifier{
-		Words:             make(map[string]map[string]uint64),
-		TotalWords:        0,
-		TotalDocsInTypes:  make(map[string]uint64),
-		TotalDocs:         0,
-		TotalWordsInTypes: make(map[string]uint64),
-		Threshold:         Threshold,
+		Words:                  make(map[string]map[string]uint64),
+		TotalDocsInCategories:  make(map[string]uint64),
+		TotalWordsInCategories: make(map[string]uint64),
+		Threshold:              Threshold,
 	}
 
-	for _, category := range types {
+	for _, category := range categories {
 		c.Words[category] = make(map[string]uint64)
-		c.TotalDocsInTypes[category] = 0
-		c.TotalWordsInTypes[category] = 0
 	}
 	return
 }
@@ -43,50 +39,50 @@ func NewClassifier(types []string, Threshold float64) (c Classifier) {
 func (c *Classifier) Train(category string, document string) {
 	for word, count := range countWords(document) {
 		c.Words[category][word] += uint64(count)
-		c.TotalWordsInTypes[category] += uint64(count)
+		c.TotalWordsInCategories[category] += uint64(count)
 		c.TotalWords += uint64(count)
 	}
-	c.TotalDocsInTypes[category]++
+	c.TotalDocsInCategories[category]++
 	c.TotalDocs++
 }
 
 func (c *Classifier) pCategory(category string) float64 {
-	return float64(c.TotalDocsInTypes[category]) / float64(c.TotalDocs)
+	return float64(c.TotalDocsInCategories[category]) / float64(c.TotalDocs)
 }
 
 func (c *Classifier) pDocCategory(category string, document string) (p float64) {
 	p = 1.0
 	for word := range countWords(document) {
-		p = p * c.pWordCategory(category, word)
+		p *= c.pWordCategory(category, word)
 	}
 	return p
 }
 
 func (c *Classifier) pWordCategory(category string, word string) float64 {
-	return float64(c.Words[category][stem(word)]+1) / float64(c.TotalWordsInTypes[category])
+	return float64(c.Words[category][stem(word)]+1) / float64(c.TotalWordsInCategories[category])
 }
 
 func (c *Classifier) pCategoryDocument(category string, document string) float64 {
 	return c.pDocCategory(category, document) * c.pCategory(category)
 }
 
-// P is Probabilities of each types.
-func (c *Classifier) P(document string) (p map[string]float64) {
-	p = make(map[string]float64)
+// P is Probabilities of each categories.
+func (c *Classifier) P(document string) map[string]float64 {
+	p := make(map[string]float64)
 	for category := range c.Words {
 		p[category] = c.pCategoryDocument(category, document)
 	}
-	return
-}
-
-type sorted struct {
-	category    string
-	probability float64
+	return p
 }
 
 // Classify classify documents.
-func (c *Classifier) Classify(document string) (category string) {
+func (c *Classifier) Classify(document string) string {
 	prob := c.P(document)
+
+	type sorted struct {
+		category    string
+		probability float64
+	}
 
 	var sp []sorted
 	for c, p := range prob {
@@ -96,13 +92,14 @@ func (c *Classifier) Classify(document string) (category string) {
 		return sp[i].probability > sp[j].probability
 	})
 
+	var category string
 	if sp[0].probability/sp[1].probability > c.Threshold {
 		category = sp[0].category
 	} else {
 		category = "unknown"
 	}
 
-	return
+	return category
 }
 
 // Encode trained Classifier

@@ -9,16 +9,25 @@ import (
 )
 
 func countWords(document string) (wordCount map[string]int) {
-	replaced := regexp.MustCompile("[^a-zA-Z 0-9]+").ReplaceAllString(strings.ToLower(document), "")
-	words := strings.Split(replaced, " ")
+	document = clean(document)
+	words := strings.Split(document, " ")
 	wordCount = make(map[string]int)
 	for _, word := range words {
-		if _, ok := stopWords[word]; !ok {
+		if !isStopWords(word) {
 			key := stem(strings.ToLower(word))
 			wordCount[key]++
 		}
 	}
 	return
+}
+
+func clean(document string) string {
+	return regexp.MustCompile("[^a-zA-Z 0-9]+").ReplaceAllString(strings.ToLower(document), "")
+}
+
+func isStopWords(word string) bool {
+	_, ok := stopWords[word]
+	return ok
 }
 
 func stem(word string) string {

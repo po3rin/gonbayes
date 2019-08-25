@@ -13,6 +13,13 @@ Naive Bayes is a simple technique for constructing classifiers: models that assi
 Bayes' theorem
 <img src ="./images/nb.png" width="400px">
 
+## Quick Start
+
+```bash
+$ go run cmd/negaposi/main.go -s "i unlike this" -f "dataset/yelp_labelled.txt"
+negative
+```
+
 ## Example
 
 ```go
