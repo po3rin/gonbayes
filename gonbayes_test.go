@@ -14,7 +14,21 @@ func TestP(t *testing.T) {
 		dataset    map[string]string
 		document   string
 		want       map[string]float64
-	}{}
+	}{
+		{
+			name:       "example",
+			categories: []string{"経済", "IT", "エンタメ"},
+			dataset: map[string]string{
+				"Price":            "経済",
+				"Insurance":        "経済",
+				"Python and Price": "IT",
+				"Python and Go":    "IT",
+				"Marvel":           "エンタメ",
+			},
+			document: "Python and Go",
+			want:     map[string]float64{"IT": 0.05, "エンタメ": 0, "経済": 0},
+		},
+	}
 
 	for _, tt := range tests {
 		tt := tt
