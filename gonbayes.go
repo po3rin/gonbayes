@@ -59,8 +59,8 @@ func (c *Classifier) pDocCategory(category string, document string) (p float64) 
 }
 
 func (c *Classifier) pWordCategory(category string, word string) float64 {
-	// return float64(c.Words[category][stem(word)]) / float64(c.TotalWordsInCategories[category])
-	return float64(c.Words[category][stem(word)]+1) / float64(c.TotalWordsInCategories[category]+c.TotalWords)
+	return float64(c.Words[category][stem(word)]) / float64(c.TotalWordsInCategories[category])
+	// return float64(c.Words[category][stem(word)]+1) / float64(c.TotalWordsInCategories[category]+c.TotalWords)
 }
 
 func (c *Classifier) pCategoryDocument(category string, document string) float64 {
