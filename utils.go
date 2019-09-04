@@ -8,6 +8,8 @@ import (
 	"github.com/kljensen/snowball"
 )
 
+var re = regexp.MustCompile("[^a-zA-Z 0-9]+")
+
 func countWords(document string) (wordCount map[string]int) {
 	document = clean(document)
 	words := strings.Split(document, " ")
@@ -22,7 +24,7 @@ func countWords(document string) (wordCount map[string]int) {
 }
 
 func clean(document string) string {
-	return regexp.MustCompile("[^a-zA-Z 0-9]+").ReplaceAllString(strings.ToLower(document), "")
+	return re.ReplaceAllString(strings.ToLower(document), "")
 }
 
 func isStopWords(word string) bool {

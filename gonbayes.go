@@ -112,6 +112,8 @@ func (c *Classifier) Encode(fileName string) error {
 	if err != nil {
 		log.Fatal(err)
 	}
+	f.Close()
+
 	err = gob.NewEncoder(f).Encode(&c)
 	if err != nil {
 		return errors.Wrap(err, "gonbayes: failed to encode")
@@ -125,6 +127,7 @@ func (c *Classifier) Decode(fileName string) error {
 	if err != nil {
 		log.Fatal(err)
 	}
+	f.Close()
 
 	err = gob.NewDecoder(f).Decode(c)
 	if err != nil {

@@ -9,9 +9,8 @@ import (
 
 func TestIsStopWords(t *testing.T) {
 	tests := []struct {
-		name string
-		word string
-		want bool
+		name, word string
+		want       bool
 	}{
 		{
 			name: "stop word",
@@ -39,9 +38,7 @@ func TestIsStopWords(t *testing.T) {
 
 func TestStem(t *testing.T) {
 	tests := []struct {
-		name string
-		word string
-		want string
+		name, word, want string
 	}{
 		{
 			name: "stop word",
@@ -69,9 +66,7 @@ func TestStem(t *testing.T) {
 
 func TestClean(t *testing.T) {
 	tests := []struct {
-		name string
-		word string
-		want string
+		name, word, want string
 	}{
 		{
 			name: "clean",
