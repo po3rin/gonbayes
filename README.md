@@ -42,11 +42,9 @@ func loadNegaPosiDataset(file string) (map[string]string, error) {
 
 func main() {
     class := []string{posiLabel, negaLabel}
-    threshold := 1.4
-
     dataset, err := loadNegaPosiDataset(*f)
 
-    classifier := gonbayes.NewClassifier(class, threshold)
+    classifier := gonbayes.NewClassifier(class)
     for s, v := range dataset {
         classifier.Train(v, s)
     }

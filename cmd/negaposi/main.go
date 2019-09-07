@@ -16,7 +16,7 @@ const (
 	negaLabel = "negative"
 )
 
-func loadNegaPosiDataset(file string) (map[string]string, error) {
+func loadDataset(file string) (map[string]string, error) {
 	f, err := os.Open(file)
 	if err != nil {
 		return nil, err
@@ -53,9 +53,7 @@ func main() {
 	flag.Parse()
 
 	class := []string{posiLabel, negaLabel}
-	threshold := 1.4
-
-	classifier := gonbayes.NewClassifier(class, threshold)
+	classifier := gonbayes.NewClassifier(class)
 
 	if *t != "" {
 		err := classifier.Decode(*t)
@@ -63,7 +61,7 @@ func main() {
 			log.Fatal(err)
 		}
 	} else {
-		dataset, err := loadNegaPosiDataset(*f)
+		dataset, err := loadDataset(*f)
 		if err != nil {
 			log.Fatal(err)
 		}

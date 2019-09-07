@@ -4,6 +4,7 @@ package gonbayes
 import (
 	"encoding/gob"
 	"log"
+	"math"
 	"os"
 	"sort"
 
@@ -17,16 +18,14 @@ type Classifier struct {
 	TotalDocsInCategories  map[string]uint64
 	TotalDocs              uint64
 	TotalWordsInCategories map[string]uint64
-	Threshold              float64
 }
 
 // NewClassifier inits classifier.
-func NewClassifier(categories []string, Threshold float64) *Classifier {
+func NewClassifier(categories []string) *Classifier {
 	c := &Classifier{
 		Words:                  make(map[string]map[string]uint64),
 		TotalDocsInCategories:  make(map[string]uint64),
 		TotalWordsInCategories: make(map[string]uint64),
-		Threshold:              Threshold,
 	}
 
 	for _, category := range categories {
@@ -47,28 +46,28 @@ func (c *Classifier) Train(category string, document string) {
 }
 
 func (c *Classifier) pCategory(category string) float64 {
-	return float64(c.TotalDocsInCategories[category]) / float64(c.TotalDocs)
+	return math.Log(float64(c.TotalDocsInCategories[category]) / float64(c.TotalDocs))
 }
 
 func (c *Classifier) pDocCategory(category string, document string) float64 {
-	p := 1.0
+	var p float64
 	for word := range countWords(document) {
-		p *= c.pWordCategory(category, word)
+		p += math.Log(c.pWordCategory(category, word))
 	}
 	return p
 }
 
 func (c *Classifier) pWordCategory(category string, word string) float64 {
-	return float64(c.Words[category][stem(word)]) / float64(c.TotalWordsInCategories[category])
+	// return float64(c.Words[category][stem(word)]) / float64(c.TotalWordsInCategories[category])
 
 	// Additive smoothings
-	// n = float64(c.Words[category][stem(word)]+1)
-	// d = float64(c.TotalWordsInCategories[category]+c.TotalWords)
-	// return n / d
+	n := float64(c.Words[category][stem(word)] + 1)
+	d := float64(c.TotalWordsInCategories[category] + c.TotalWords)
+	return n / d
 }
 
 func (c *Classifier) pCategoryDocument(category string, document string) float64 {
-	return c.pDocCategory(category, document) * c.pCategory(category)
+	return c.pDocCategory(category, document) + c.pCategory(category)
 }
 
 // P is Probabilities of each categories.
@@ -97,14 +96,7 @@ func (c *Classifier) Classify(document string) string {
 		return sp[i].probability > sp[j].probability
 	})
 
-	var category string
-	if sp[0].probability/sp[1].probability > c.Threshold {
-		category = sp[0].category
-	} else {
-		category = "unknown"
-	}
-
-	return category
+	return sp[0].category
 }
 
 // Encode trained Classifier
