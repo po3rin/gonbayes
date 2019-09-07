@@ -46,10 +46,20 @@ func (c *Classifier) Train(category string, document string) {
 }
 
 func (c *Classifier) pCategory(category string) float64 {
+	// return float64(c.TotalDocsInCategories[category]) / float64(c.TotalDocs)
+
+	// Take measures against underflow
 	return math.Log(float64(c.TotalDocsInCategories[category]) / float64(c.TotalDocs))
 }
 
 func (c *Classifier) pDocCategory(category string, document string) float64 {
+	// p := 1.0
+	// for word := range countWords(document) {
+	// 	p *= c.pWordCategory(category, word)
+	// }
+	// return p
+
+	// Take measures against underflow
 	var p float64
 	for word := range countWords(document) {
 		p += math.Log(c.pWordCategory(category, word))
@@ -67,6 +77,9 @@ func (c *Classifier) pWordCategory(category string, word string) float64 {
 }
 
 func (c *Classifier) pCategoryDocument(category string, document string) float64 {
+	// return c.pDocCategory(category, document) * c.pCategory(category)
+
+	// Take measures against underflow
 	return c.pDocCategory(category, document) + c.pCategory(category)
 }
 
