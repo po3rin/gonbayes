@@ -21,8 +21,8 @@ type Classifier struct {
 }
 
 // NewClassifier inits classifier.
-func NewClassifier(categories []string, Threshold float64) (c Classifier) {
-	c = Classifier{
+func NewClassifier(categories []string, Threshold float64) *Classifier {
+	c := &Classifier{
 		Words:                  make(map[string]map[string]uint64),
 		TotalDocsInCategories:  make(map[string]uint64),
 		TotalWordsInCategories: make(map[string]uint64),
@@ -32,7 +32,7 @@ func NewClassifier(categories []string, Threshold float64) (c Classifier) {
 	for _, category := range categories {
 		c.Words[category] = make(map[string]uint64)
 	}
-	return
+	return c
 }
 
 // Train trains documents classifier.
@@ -50,8 +50,8 @@ func (c *Classifier) pCategory(category string) float64 {
 	return float64(c.TotalDocsInCategories[category]) / float64(c.TotalDocs)
 }
 
-func (c *Classifier) pDocCategory(category string, document string) (p float64) {
-	p = 1.0
+func (c *Classifier) pDocCategory(category string, document string) float64 {
+	p := 1.0
 	for word := range countWords(document) {
 		p *= c.pWordCategory(category, word)
 	}
