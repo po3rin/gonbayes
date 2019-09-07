@@ -116,7 +116,7 @@ func (c *Classifier) Encode(fileName string) error {
 	if err != nil {
 		log.Fatal(err)
 	}
-	f.Close()
+	defer f.Close()
 
 	err = gob.NewEncoder(f).Encode(&c)
 	if err != nil {
@@ -131,7 +131,7 @@ func (c *Classifier) Decode(fileName string) error {
 	if err != nil {
 		log.Fatal(err)
 	}
-	f.Close()
+	defer f.Close()
 
 	err = gob.NewDecoder(f).Decode(c)
 	if err != nil {
