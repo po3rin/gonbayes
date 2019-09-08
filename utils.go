@@ -36,7 +36,7 @@ func stem(word string) string {
 	stemmed, err := snowball.Stem(word, "english", true)
 	if err != nil {
 		// ignore error
-		fmt.Println("Cannot stem word:", word)
+		fmt.Printf("cannot stem word: %s\n", word)
 		return word
 	}
 	return stemmed

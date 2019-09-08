@@ -3,6 +3,7 @@ package gonbayes
 
 import (
 	"encoding/gob"
+	"fmt"
 	"log"
 	"math"
 	"os"
@@ -125,7 +126,7 @@ func (c *Classifier) Encode(fileName string) error {
 
 	err = gob.NewEncoder(f).Encode(&c)
 	if err != nil {
-		return errors.Wrap(err, "gonbayes: failed to encode")
+		return fmt.Errorf("gonbayes: failed to encode classifier: %w", err)
 	}
 	return nil
 }
@@ -140,7 +141,7 @@ func (c *Classifier) Decode(fileName string) error {
 
 	err = gob.NewDecoder(f).Decode(c)
 	if err != nil {
-		return errors.Wrap(err, "gonbayes: failed to dencode file")
+		return fmt.Errorf("gonbayes: failed to dencode file: %w", err)
 	}
 	return nil
 }
